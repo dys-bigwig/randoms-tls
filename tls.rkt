@@ -481,3 +481,24 @@
              (group n (drop xs n)))
        ls)
      (error "negative or zero n"))])
+     
+
+(define rand-fun
+  (λ (seed) (modulo (* seed 16807) 2147483647)))
+
+(define (iterate f x)
+  (stream-cons x (iterate f (f x))))
+
+(define (make-rng seed)
+  (stream-map #λ(modulo % 100) (stream-iterate rand-fun seed)))
+    
+;hash_hash = defaultdict(dict)
+;hash_hash["first"]["second"] = value
+;That avoids having the check
+;if "first" not in hash_hash:
+;   hash_hash["first"] = {}
+(define (dict-set-with-default! hh fst snd value)
+ (hash-set! (hash-ref! hh fst make-hash) snd value))
+;Functionally:
+;(hash-update h 'first  (lambda (h-first) (hash-set h-first 'second value) hash)
+;Or currying the update function?
