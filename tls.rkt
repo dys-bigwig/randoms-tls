@@ -491,6 +491,23 @@
 
 (define (make-rng seed)
   (stream-map #λ(modulo % 100) (stream-iterate rand-fun seed)))
+  
+(define (find-intersecting-atom l m)
+ (cond
+  [(or (null? l) (null? m)) '()]
+  [(and (list? (car l)) (list? (car m)))
+   (let ([intersecting-cars (find-intersecting-atom (car l)
+                                                    (car m))])
+    (if (null? intersecting-cars)
+       (find-intersecting-atom (cdr l)
+                               (cdr m))
+       (cons intersecting-cars (cdr l))))]
+  [else
+   (if (equal? (car l)
+               (car m))
+      l
+      (find-intersecting-atom (cdr l)
+                              (cdr m)))]))
     
 ;hash_hash = defaultdict(dict)
 ;hash_hash["first"]["second"] = value
